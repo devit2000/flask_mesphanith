@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-product_bp = Blueprint('routes', __name__)
+currency_bp = Blueprint('currency', __name__)
 
-from routes.products import routes
+from routes.currency import routes

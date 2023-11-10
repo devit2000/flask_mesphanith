@@ -1,12 +1,12 @@
-{% extends "/admin/master.html" %} {% block heading %} Add Customer {% endblock
+{% extends "/admin/master.html" %} {% block heading %} Add User {% endblock
 %} {% block button %}
-<a href="/admin/customer" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+<a href="/admin/user" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
 {% endblock %} {% block content %}
-<form class="container-lg" method="POSt" action="/admin/customer/add" hx-boost="true">
+<form class="container-lg" method="POSt" action="/admin/user/add" hx-boost="true">
   <div class="row">
     <div class="col-sm-12">
       <div class="form-group">
-        <label>Customer Name</label>
+        <label>User Name</label>
         <input id="name" type="text" class="form-control" name="name" placeholder="Enter ..." />
       </div>
     </div>

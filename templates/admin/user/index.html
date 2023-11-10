@@ -1,30 +1,30 @@
 {% extends "admin/master.html" %}
 {% block heading %}
-    Customers
+    Users
 {% endblock %}
 {% block button %}
-    <a href="/admin/customer/add" class="btn btn-primary"><i class="fas fa-plus"></i> Add Customer</a>
+    <a href="/admin/user/add" class="btn btn-primary"><i class="fas fa-plus"></i> Add User</a>
 
 {% endblock %}
 {% block content %}
     {% if success != '' %}
         {% if type == 3 %}
             <div class="alert alert-{{ 'primary' if success==True else 'danger' }}" role="alert">
-                {{ 'Customer removed successfully.' if success==True else 'Failed to remove customer.' }}
+                {{ 'User removed successfully.' if success==True else 'Failed to remove user.' }}
                 <button type="button" class="close text-white" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
         {% elif type==2 %}
             <div class="alert alert-{{ 'primary' if success==True else 'danger' }}" role="alert">
-                {{ 'Customer updated successfully.' if success==True else 'Failed to updated customer.' }}
+                {{ 'User updated successfully.' if success==True else 'Failed to updated user.' }}
                 <button type="button" class="close text-white" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
         {% else %}
             <div class="alert alert-{{ 'primary' if success==True else 'danger' }}" role="alert">
-                {{ 'Customer added successfully.' if success==True else 'Failed to add customer.' }}
+                {{ 'User added successfully.' if success==True else 'Failed to add user.' }}
                 <button type="button" class="close text-white" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -35,7 +35,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Customer List</h3>
+                    <h3 class="card-title">User List</h3>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -44,29 +44,29 @@
                         <tr>
                             <th width="50">#</th>
                             <th width="50">Image</th>
-                            <th>Customer Name</th>
+                            <th>User Name</th>
                             <th>Status</th>
                             <th width="200">Action</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for customer in customers %}
+                        {% for user in users %}
 
 
                             <tr>
                                 <td>{{ loop.index }}</td>
                                 <td>
-                                    <img src="{{ customer['image'] }}" style="border-radius: 50%;" width="35" height="35"
+                                    <img src="{{ user['image'] }}" style="border-radius: 50%;" width="35" height="35"
                                          alt="">
                                 </td>
-                                <td>{{ customer['name'] }}</td>
-                                <td>{{ "Active" if customer['status'] ==1 else "In Active" }}</td>
+                                <td>{{ user['name'] }}</td>
+                                <td>{{ "Active" if user['status'] ==1 else "In Active" }}</td>
                                 <td class="d-flex" style="gap:10px">
-                                    <a href="/admin/customer/edit/{{ customer['id'] }}" class="btn btn-secondary">
+                                    <a href="/admin/user/edit/{{ user['id'] }}" class="btn btn-secondary">
                                         <i class="fas fa-edit"></i>
                                         Edit</a>
-                                    <form method="POST" action="/admin/customer" hx-boost="true">
-                                        <input name="id" type="hidden" value="{{ customer['id'] }}"/>
+                                    <form method="POST" action="/admin/user" hx-boost="true">
+                                        <input name="id" type="hidden" value="{{ user['id'] }}"/>
                                         <button type="submit" class="btn btn-danger">
                                             <i class="fas fa-trash"></i>
                                             Delete

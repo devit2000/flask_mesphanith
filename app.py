@@ -1,9 +1,12 @@
 from random import randint
-import uuid
+from routes.products import product_bp
+from routes.users import user_bp
+from routes.currency import currency_bp
+from routes.customers import customer_bp
+from routes.category import category_bp
 
 import names
-from flask import Flask, redirect, render_template, request
-import sqlite3
+from flask import Flask,  render_template, request
 
 app = Flask(__name__)
 
@@ -46,96 +49,6 @@ def admin():
     return render_template("admin/index.html", url=current_url)
 
 
-@app.route("/admin/product")
-def product():
-    conn = sqlite3.connect('database.db')
-    conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
-    cur.execute("SELECT * from product;")
-    products = cur.fetchall()
-    current_url = "/admin/product"
-    return render_template("admin/product/index.html", url=current_url, products=products)
-
-
-@app.route("/admin/product/add")
-def add_product_view():
-    current_url = "/admin/product/add"
-    return render_template("admin/product/add.html", url=current_url)
-
-
-@app.route("/admin/product/add", methods=["POST"])
-def add_product():
-    current_url = "/admin/product"
-    id = str(uuid.uuid4())
-    name = request.form.get("name")
-    cost = request.form.get("cost")
-    price = request.form.get("price")
-    qty = request.form.get("qty")
-    status = 1
-    # img = request.files["img"]
-    img = "https://www.coca-cola.com/content/dam/onexp/pk/en/brands/coca-cola/coca-cola-sp-images/en_coca-cola_prod_coke_750x750.jpg"
-    if (name == "" or cost == "" or price == "" or qty == ""):
-        return render_template("admin/product/add.html", url=current_url, success=False)
-
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO product (id,name, quantity,cost,price,image,status) VALUES (?,?,?,?,?,?,?)",
-                   (id, name, qty, cost, price, img, status))
-    conn.commit()
-    conn.close()
-    return redirect("/admin/product")
-
-
-@app.route("/admin/product", methods=["POST"])
-def delete_product():
-    id = request.form.get("id")
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-    cursor.execute(f"DELETE FROM product WHERE id='{id}'")
-    conn.commit()
-    conn.close()
-    return redirect("/admin/product")
-
-
-@app.route("/admin/product/edit/<id>")
-def edit_product_view(id):
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-    cursor.execute(f"select * from product WHERE id='{id}'")
-    product = cursor.fetchone()
-    return render_template("admin/product/edit.html", product=product, id=id)
-
-
-@app.route('/admin/product/edit', methods=["POST"])
-def edit_product():
-    query = '''
-    UPDATE product 
-    SET name = ?,
-        cost = ?,
-        price = ?,
-        quantity = ?,
-        status = ?,
-        image = ?
-    WHERE id = ?
-    '''
-    name = request.form.get("name")
-    cost = request.form.get("cost")
-    price = request.form.get("price")
-    qty = request.form.get("qty")
-    status = 0
-    if (request.form.get("status")):
-        status = 1
-    # img = request.files["img"]
-    img = "https://www.coca-cola.com/content/dam/onexp/pk/en/brands/coca-cola/coca-cola-sp-images/en_coca-cola_prod_coke_750x750.jpg"
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-    cursor.execute(query, (name, cost, price, qty,
-                   status, img, request.form.get('id')))
-    conn.commit()
-    conn.close()
-    print(request.form.get('id'))
-    return redirect('/admin/product')
-
 
 @app.errorhandler(404)
 def error_404(e):
@@ -146,6 +59,12 @@ def error_404(e):
 def error_500(e):
     return render_template("500.html")
 
+
+app.register_blueprint(product_bp)
+app.register_blueprint(category_bp)
+app.register_blueprint(user_bp)
+app.register_blueprint(customer_bp)
+app.register_blueprint(currency_bp)
 
 if __name__ == '__main__':
     app.run()

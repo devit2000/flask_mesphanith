@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-customer_bp = Blueprint('customers', __name__)
+user_bp = Blueprint('users', __name__)
 
-from routes.customers import routes
+from routes.users import routes

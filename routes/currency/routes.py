@@ -4,24 +4,25 @@ import uuid
 from flask import render_template, request, redirect
 from dotenv import load_dotenv
 import os
-from routes.products import product_bp
+from routes.currency import currency_bp
 
 load_dotenv()
 
-TRUE=os.environ.get('true_code')
-FALSE=os.environ.get('false_code')
-CREATE=os.environ.get('create_code')
-UPDATE=os.environ.get('update_code')
-DELETE=os.environ.get('delete_code')
+TRUE = os.environ.get('true_code')
+FALSE = os.environ.get('false_code')
+CREATE = os.environ.get('create_code')
+UPDATE = os.environ.get('update_code')
+DELETE = os.environ.get('delete_code')
+
+app = currency_bp
 
 
-app = product_bp
-@app.route("/admin/product")
-def product():
-    succeeded=''
+@app.route("/admin/currency")
+def currency():
+    succeeded = ''
     type_name = 0
-    success=request.args.get("success")
-    type=request.args.get("type")
+    success = request.args.get("success")
+    type = request.args.get("type")
     if success == TRUE:
         succeeded = True
     if success == FALSE:
@@ -35,102 +36,93 @@ def product():
     else:
         type_name = 0
 
-
-
     conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
-    cur.execute("SELECT * from product;")
-    products = cur.fetchall()
-    current_url = "/admin/product"
-    return render_template("admin/product/index.html", url=current_url, products=products, success=succeeded, type=type_name)
+    cur.execute("SELECT * from currency;")
+    currencys = cur.fetchall()
+    current_url = "/admin/currency"
+    return render_template("admin/currency/index.html", url=current_url, currencys=currencys, success=succeeded,
+                           type=type_name)
 
 
-@app.route("/admin/product/add")
-def add_product_view():
-    current_url = "/admin/product/add"
-    return render_template("admin/product/add.html", url=current_url)
+@app.route("/admin/currency/add")
+def add_currency_view():
+    current_url = "/admin/currency"
+    return render_template("admin/currency/add.html", url=current_url)
 
 
-@app.route("/admin/product/add", methods=["POST"])
-def add_product():
-    current_url = "/admin/product"
+@app.route("/admin/currency/add", methods=["POST"])
+def add_currency():
     id = str(uuid.uuid4())
     name = request.form.get("name")
-    cost = request.form.get("cost")
-    price = request.form.get("price")
-    qty = request.form.get("qty")
-    status = 1
-    # img = request.files["img"]
-    img = "https://www.coca-cola.com/content/dam/onexp/pk/en/brands/coca-cola/coca-cola-sp-images/en_coca-cola_prod_coke_750x750.jpg"
-    if (name == "" or cost == "" or price == "" or qty == ""):
-        return render_template("admin/product/add.html", url=current_url, success=False)
+    code = request.form.get("code")
+    symbol = request.form.get("symbol")
+    sell_out_price = request.form.get("sell_out_price")
+    is_default = 0
+    if request.form.get("is_default"):
+        is_default = 1
 
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO product (id,name, quantity,cost,price,image,status) VALUES (?,?,?,?,?,?,?)",
-                   (id, name, qty, cost, price, img, status))
+    cursor.execute("INSERT INTO currency (id,name, code,symbol,sell_out_price, is_default) VALUES (?,?,?,?,?,?)",(id, name, code, symbol, sell_out_price, is_default))
     conn.commit()
     conn.close()
     if cursor.rowcount > 0:
-        return redirect(f"/admin/product?success={TRUE}&type={CREATE}")
+        return redirect(f"/admin/currency?success={TRUE}&type={CREATE}")
     else:
-        return redirect(f"/admin/product?success={FALSE}&type={CREATE}")
+        return redirect(f"/admin/currency?success={FALSE}&type={CREATE}")
 
 
-
-@app.route("/admin/product", methods=["POST"])
-def delete_product():
+@app.route("/admin/currency", methods=["POST"])
+def delete_currency():
     id = request.form.get("id")
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM product WHERE id = ?", (id,))
+    cursor.execute("DELETE FROM currency WHERE id = ?", (id,))
     conn.commit()
     conn.close()
     print(cursor.rowcount)
     if cursor.rowcount > 0:
-        return redirect(f"/admin/product?success={TRUE}&type={DELETE}")
+        return redirect(f"/admin/currency?success={TRUE}&type={DELETE}")
     else:
-        return redirect(f"/admin/product?success={FALSE}&type={DELETE}")
+        return redirect(f"/admin/currency?success={FALSE}&type={DELETE}")
 
 
-@app.route("/admin/product/edit/<id>")
-def edit_product_view(id):
+@app.route("/admin/currency/edit/<id>")
+def edit_currency_view(id):
+    current_url = "/admin/currency"
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    cursor.execute("select * from product WHERE id = ?", (id,))
-    product = cursor.fetchone()
-    return render_template("admin/product/edit.html", product=product, id=id)
+    cursor.execute("select * from currency WHERE id = ?", (id,))
+    currency = cursor.fetchone()
+    return render_template("admin/currency/edit.html", currency=currency, id=id, url=current_url)
 
 
-@app.route('/admin/product/edit', methods=["POST"])
-def edit_product():
+@app.route('/admin/currency/edit', methods=["POST"])
+def edit_currency():
     query = '''
-    UPDATE product 
+    UPDATE currency 
     SET name = ?,
-        cost = ?,
-        price = ?,
-        quantity = ?,
-        status = ?,
-        image = ?
+        code = ?,
+        symbol = ?,
+        sell_out_price = ?,
+        is_default = ?
     WHERE id = ?
     '''
     name = request.form.get("name")
-    cost = request.form.get("cost")
-    price = request.form.get("price")
-    qty = request.form.get("qty")
-    status = 0
-    if (request.form.get("status")):
-        status = 1
-    # img = request.files["img"]
-    img = "https://www.coca-cola.com/content/dam/onexp/pk/en/brands/coca-cola/coca-cola-sp-images/en_coca-cola_prod_coke_750x750.jpg"
+    code = request.form.get("code")
+    sell_out_price = request.form.get("sell_out_price")
+    symbol = request.form.get("symbol")
+    is_default = 0
+    if request.form.get("is_default"):
+        is_default = 1
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    cursor.execute(query, (name, cost, price, qty,
-                           status, img, request.form.get('id')))
+    cursor.execute(query, (name, code, symbol, sell_out_price, is_default, request.form.get('id')))
     conn.commit()
     conn.close()
     if cursor.rowcount > 0:
-        return redirect(f"/admin/product?success={TRUE}&type={UPDATE}")
+        return redirect(f"/admin/currency?success={TRUE}&type={UPDATE}")
     else:
-        return redirect(f"/admin/product?success={FALSE}&type={UPDATE}")
+        return redirect(f"/admin/currency?success={FALSE}&type={UPDATE}")

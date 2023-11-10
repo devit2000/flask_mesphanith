@@ -1,30 +1,30 @@
 {% extends "admin/master.html" %}
 {% block heading %}
-    Products
+    Categorys
 {% endblock %}
 {% block button %}
-    <a href="/admin/product/add" class="btn btn-primary"><i class="fas fa-plus"></i> Add Product</a>
+    <a href="/admin/category/add" class="btn btn-primary"><i class="fas fa-plus"></i> Add Category</a>
 
 {% endblock %}
 {% block content %}
     {% if success != '' %}
         {% if type == 3 %}
             <div class="alert alert-{{ 'primary' if success==True else 'danger' }}" role="alert">
-                {{ 'Product removed successfully.' if success==True else 'Failed to remove product.' }}
+                {{ 'Category removed successfully.' if success==True else 'Failed to remove category.' }}
                 <button type="button" class="close text-white" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
         {% elif type==2 %}
             <div class="alert alert-{{ 'primary' if success==True else 'danger' }}" role="alert">
-                {{ 'Product updated successfully.' if success==True else 'Failed to updated product.' }}
+                {{ 'Category updated successfully.' if success==True else 'Failed to updated category.' }}
                 <button type="button" class="close text-white" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
         {% else %}
             <div class="alert alert-{{ 'primary' if success==True else 'danger' }}" role="alert">
-                {{ 'Product added successfully.' if success==True else 'Failed to add product.' }}
+                {{ 'Category added successfully.' if success==True else 'Failed to add category.' }}
                 <button type="button" class="close text-white" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -35,7 +35,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Product List</h3>
+                    <h3 class="card-title">Category List</h3>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -43,36 +43,25 @@
                         <thead>
                         <tr>
                             <th width="50">#</th>
-                            <th width="50">Image</th>
-                            <th>Product Name</th>
-                            <th>Quantity</th>
-                            <th>Cost</th>
-                            <th>Price</th>
+                            <th>Category Name</th>
                             <th>Status</th>
                             <th width="200">Action</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for product in products %}
+                        {% for category in categorys %}
 
 
                             <tr>
                                 <td>{{ loop.index }}</td>
-                                <td>
-                                    <img src="{{ product['image'] }}" style="border-radius: 50%;" width="35" height="35"
-                                         alt="">
-                                </td>
-                                <td>{{ product['name'] }}</td>
-                                <td>{{ product['quantity'] }}</td>
-                                <td>${{ product['cost'] }}</td>
-                                <td>${{ product['price'] }}</td>
-                                <td>{{ "In Stock" if product['status'] =='1' else "Out of Stock" }}</td>
+                                <td>{{ category['name'] }}</td>
+                                <td>{{ "Active" if category['status'] ==1 else "In Active" }}</td>
                                 <td class="d-flex" style="gap:10px">
-                                    <a href="/admin/product/edit/{{ product['id'] }}" class="btn btn-secondary">
+                                    <a href="/admin/category/edit/{{ category['id'] }}" class="btn btn-secondary">
                                         <i class="fas fa-edit"></i>
                                         Edit</a>
-                                    <form method="POST" action="/admin/product" hx-boost="true">
-                                        <input name="id" type="hidden" value="{{ product['id'] }}"/>
+                                    <form method="POST" action="/admin/category" hx-boost="true">
+                                        <input name="id" type="hidden" value="{{ category['id'] }}"/>
                                         <button type="submit" class="btn btn-danger">
                                             <i class="fas fa-trash"></i>
                                             Delete

@@ -4,7 +4,7 @@ import uuid
 from flask import render_template, request, redirect
 from dotenv import load_dotenv
 import os
-from routes.customers import customer_bp
+from routes.users import user_bp
 
 load_dotenv()
 
@@ -14,11 +14,11 @@ CREATE = os.environ.get('create_code')
 UPDATE = os.environ.get('update_code')
 DELETE = os.environ.get('delete_code')
 
-app = customer_bp
+app = user_bp
 
 
-@app.route("/admin/customer")
-def customer():
+@app.route("/admin/user")
+def user():
     succeeded = ''
     type_name = 0
     success = request.args.get("success")
@@ -39,21 +39,21 @@ def customer():
     conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
-    cur.execute("SELECT * from customer;")
-    customers = cur.fetchall()
-    current_url = "/admin/customer"
-    return render_template("admin/customer/index.html", url=current_url, customers=customers, success=succeeded,
+    cur.execute("SELECT * from user;")
+    users = cur.fetchall()
+    current_url = "/admin/user"
+    return render_template("admin/user/index.html", url=current_url, users=users, success=succeeded,
                            type=type_name)
 
 
-@app.route("/admin/customer/add")
-def add_customer_view():
-    current_url = "/admin/customer/add"
-    return render_template("admin/customer/add.html", url=current_url)
+@app.route("/admin/user/add")
+def add_user_view():
+    current_url = "/admin/user/add"
+    return render_template("admin/user/add.html", url=current_url)
 
 
-@app.route("/admin/customer/add", methods=["POST"])
-def add_customer():
+@app.route("/admin/user/add", methods=["POST"])
+def add_user():
     id = str(uuid.uuid4())
     name = request.form.get("name")
     profile_url = request.form.get("profile_url")
@@ -63,43 +63,43 @@ def add_customer():
 
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO customer (id,name,image,status) VALUES (?,?,?,?)",(id, name, profile_url, status))
+    cursor.execute("INSERT INTO user (id,name,image,status) VALUES (?,?,?,?)",(id, name, profile_url, status))
     conn.commit()
     conn.close()
     if cursor.rowcount > 0:
-        return redirect(f"/admin/customer?success={TRUE}&type={CREATE}")
+        return redirect(f"/admin/user?success={TRUE}&type={CREATE}")
     else:
-        return redirect(f"/admin/customer?success={FALSE}&type={CREATE}")
+        return redirect(f"/admin/user?success={FALSE}&type={CREATE}")
 
 
-@app.route("/admin/customer", methods=["POST"])
-def delete_customer():
+@app.route("/admin/user", methods=["POST"])
+def delete_user():
     id = request.form.get("id")
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM customer WHERE id = ?", (id,))
+    cursor.execute("DELETE FROM user WHERE id = ?", (id,))
     conn.commit()
     conn.close()
     print(cursor.rowcount)
     if cursor.rowcount > 0:
-        return redirect(f"/admin/customer?success={TRUE}&type={DELETE}")
+        return redirect(f"/admin/user?success={TRUE}&type={DELETE}")
     else:
-        return redirect(f"/admin/customer?success={FALSE}&type={DELETE}")
+        return redirect(f"/admin/user?success={FALSE}&type={DELETE}")
 
 
-@app.route("/admin/customer/edit/<id>")
-def edit_customer_view(id):
+@app.route("/admin/user/edit/<id>")
+def edit_user_view(id):
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    cursor.execute("select * from customer WHERE id = ?", (id,))
-    customer = cursor.fetchone()
-    return render_template("admin/customer/edit.html", customer=customer, id=id)
+    cursor.execute("select * from user WHERE id = ?", (id,))
+    user = cursor.fetchone()
+    return render_template("admin/user/edit.html", user=user, id=id)
 
 
-@app.route('/admin/customer/edit', methods=["POST"])
-def edit_customer():
+@app.route('/admin/user/edit', methods=["POST"])
+def edit_user():
     query = '''
-    UPDATE customer 
+    UPDATE user 
     SET name = ?,
         image = ?,
         status = ?
@@ -116,6 +116,6 @@ def edit_customer():
     conn.commit()
     conn.close()
     if cursor.rowcount > 0:
-        return redirect(f"/admin/customer?success={TRUE}&type={UPDATE}")
+        return redirect(f"/admin/user?success={TRUE}&type={UPDATE}")
     else:
-        return redirect(f"/admin/customer?success={FALSE}&type={UPDATE}")
+        return redirect(f"/admin/user?success={FALSE}&type={UPDATE}")

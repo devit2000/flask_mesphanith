@@ -31,23 +31,18 @@
           placeholder="Enter ..." />
       </div>
     </div>
+      <div class="col-sm-12">
+          <div class="form-group">
+              <label>Image URL</label>
+              <input id="price" type="text" name="img" class="form-control" placeholder="Enter ..." value="{{ product[5] }}"/>
+          </div>
+      </div>
     <div class="col-sm-12">
       <div class="input-group">
         <div class="custom-control custom-checkbox mr-sm-2 mb-3 float-right">
           <input type="checkbox" class="custom-control-input" name="status" {{"checked" if product[6]=='1' else "" }}
             id="customControlAutosizing" />
           <label class="custom-control-label" for="customControlAutosizing">In Stock</label>
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-12">
-      <div class="input-group">
-        <div class="custom-file">
-          <input id="img" type="file" accept="image/jpeg" class="custom-file-input" id="exampleInputFile" name="img" />
-          <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-        </div>
-        <div class="input-group-append">
-          <span class="input-group-text">Upload</span>
         </div>
       </div>
     </div>

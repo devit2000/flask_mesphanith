@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-product_bp = Blueprint('routes', __name__)
+category_bp = Blueprint('category', __name__)
 
-from routes.products import routes
+from routes.category import routes
